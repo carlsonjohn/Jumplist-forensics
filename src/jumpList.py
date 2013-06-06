@@ -2,6 +2,8 @@ import glob
 import re
 import binascii
 import optparse
+import os
+
 def cfb_header(inFile):
 	offset = 0
 	head=18*[None]
@@ -137,7 +139,7 @@ def shellLink_header(inFile):
 	head[13]=seekAndRead(inFile,offset,0x04); offset+=0x4	# Reserved3
 	# Header check
 	if head[0] != 0x0000004C:
-		print "INVALID FILE... Shell Link header: "+str(head[0])+\
+		print "\n [!] INVALID FILE... Shell Link header: "+str(head[0])+\
 		" must be: 0x0000004C"
 	# LinkCLSID check
 	#if str(head[1]) != "00021401-0000-0000-C000-000000000046":
@@ -163,12 +165,12 @@ def shellLink_header(inFile):
 		print "Shell Link application is open, but window is not shown."+\
 		"It is not given the keybaord focus: "+str(SW_SHOWMINNOACTIVE)
 	else:
-		print "ShowCommand option: "+str(head[9])+" is inappropriate"+\
+		print "\n ShowCommand option: "+str(head[9])+" is inappropriate"+\
 		", chaning the value to SW_SHOWNORMAL (0x00000001)."
 		head[9] = SW_SHOWNORMAL
-	print "In shell link header, must write link flags section."
-	print "In shell link header, must write file attributes flags section."
-	print "In shell link header, must write hotkey flags section."
+	print "\n [+] In shell link header, must write link flags section."
+	print "\n [+] In shell link header, must write file attributes flags section."
+	print "\n [+] In shell link header, must write hotkey flags section."
 	return head				
 
 def shellLink_linkTargetIDLIST():
@@ -406,7 +408,7 @@ def progMatch(inFile):
 	try:
 		List = open(str(inFile)).readlines()
 	except Exception, e:
-		print "error reading program file"
+		print "\n [!] error reading program file"
 	retArray = len(List)*[None]
 	count = 0
 	try:
@@ -420,13 +422,13 @@ def progMatch(inFile):
 				try:
 					matchedFile = glob.glob(path1+str(s[0])+"*")
 				except Exception, e:
-					print "file not found"
+					print "\n [!] file not found"
 				if str(matchedFile[0]) != 'file not found':
 					retArray[count]=matchedFile[0]
 					#print retArray
 				count = count + 1
 	except Exception, e:
-		print "error parsing program file: "+str(e)
+		print "\n [!] error parsing program file: "+str(e)
 	return retArray
 
 def parseCFB(inFile):
@@ -475,7 +477,7 @@ def main():
 	content = None
 	################ must have OUTPUT FILE ########## #########
 	if outFile == None:
-		print parser.usage	
+		print "\n ERROR: MISSING OUTPUT FILE!\n" + parser.usage	
 		exit(0)
 	################# if pFile exists Match Progs ############
 	if pFile != None:
@@ -484,13 +486,13 @@ def main():
 			for files in progArray:
 				parseCFB(str(files))
 		except Exception, e:
-			print ("Error parsing file in progArray: "+str(e))
+			print ("\n \n Error parsing file in progArray: "+str(e))
 	################## if inFile exists parse it #############
 	if inFile != None:	
 		try:
 			parseCFB(inFile)			
 		except Exception, e:
-			print ("Error: " + str(e))
+			print ("\n \n [!] CFB PARSING Error: " + str(e))
 	############## if ! inFile/pFile, parse all jumplists ####
 	elif inFile == None and pFile == None:
 		# Search for all jump list files
