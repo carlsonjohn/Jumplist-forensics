@@ -1,8 +1,11 @@
+from ctypes import *
 import glob
 import re
 import binascii
 import optparse
 import os
+
+
 
 def cfb_header(inFile):
 	offset = 0
@@ -121,6 +124,12 @@ def cfb_mFAT(inFile, version, sectSize, mSSCutoff, mFATStartSectLoc, nMFATSect):
 		return mF
 
 def shellLink_header(inFile):
+	# The location of the sellifydll goes HERE!
+	shldll = cdll.LoadLibrary("C:\\shellify.dll")
+	
+	HeaderSize= shldll.
+	
+	
 	offset = 0
 	head=14*[None]
 	head[0]=seekAndRead(inFile,offset,0x04); offset+=0x4 	# HeaderSize 
